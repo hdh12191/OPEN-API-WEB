@@ -1,14 +1,13 @@
 import "./App.css";
-import axios from "axios";
-
-interface newApiProps {
-  articles: [];
-  status: string;
-  totalResults: number;
-}
+import { BrowserRouter } from "react-router-dom";
+import Router from "./components/Router";
 
 function App() {
-  return <div>Hello</div>;
+  return (
+    <BrowserRouter>
+      <Router />
+    </BrowserRouter>
+  );
 }
 
 export default App;
