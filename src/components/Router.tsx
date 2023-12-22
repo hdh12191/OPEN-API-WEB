@@ -6,10 +6,10 @@ import FavoritesPage from "../pages/favoritesPage";
 export default function Router() {
   return (
     <Routes>
-      <Route path="/page/:id" element={<HomePage />} />
+      <Route path="/newslist" element={<HomePage />} />
       <Route path="/newsdetail/:id" element={<NewsDetailPage />} />
       <Route path="/favoriteslist" element={<FavoritesPage />} />
-      <Route path="*" element={<Navigate replace to="/page/:id" />} />
+      <Route path="*" element={<Navigate replace to="/newslist" />} />
     </Routes>
   );
 }
