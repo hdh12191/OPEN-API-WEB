@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
 
 interface Pagenate {
   newsFeedNum: number;
@@ -14,7 +13,6 @@ export function Pagination({
   setCurrentPage,
   currentPage,
 }: Pagenate) {
-  const navigate = useNavigate();
   const pageList = [];
   const totalPages = Math.ceil(newsFeedNum / newsFeedsPerPage);
 

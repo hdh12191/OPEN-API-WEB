@@ -3,8 +3,11 @@ import styled from "styled-components";
 import { User } from "@styled-icons/boxicons-solid/User";
 import { Heart } from "@styled-icons/boxicons-solid/Heart";
 import { Clock } from "@styled-icons/bootstrap/Clock";
+import { StarFill } from "@styled-icons/bootstrap/StarFill";
+import { useDispatch } from "react-redux";
+import { addFavoriteList } from "../store/slice/favoriteSlice";
 
-interface NewsFeed {
+export default interface NewsFeed {
   comments_count: number;
   domain?: string;
   id: number;
@@ -18,11 +21,30 @@ interface NewsFeed {
 }
 
 export function NewsList({ SliceNewsFeeds }: any) {
+  const dispatch = useDispatch();
   return (
     <NewsFeedBox>
       {SliceNewsFeeds.map(({ id, title, time_ago, points, user }: NewsFeed) => (
         <NewsFeeds key={id}>
-          <NewsFeedStyle to={`/newsdetail/${id}`}>{title}</NewsFeedStyle>
+          <FavoriteButtonBox>
+            <NewsFeedStyle to={`/newsdetail/${id}`}>{title}</NewsFeedStyle>
+            <button
+              onClick={() => {
+                dispatch(
+                  addFavoriteList({
+                    id,
+                    title,
+                    time_ago,
+                    points,
+                    user,
+                  })
+                );
+              }}
+            >
+              <StarFill size="30" color="#a4a795" />
+            </button>
+          </FavoriteButtonBox>
+
           <NewsFeedIconBox>
             <NewsFeedIcon>
               <User size="24" />
@@ -66,6 +88,11 @@ const NewsFeedStyle = styled(Link)`
   color: #464141;
   font-weight: 500;
   align-items: center;
+`;
+
+const FavoriteButtonBox = styled.div`
+  display: flex;
+  justify-content: space-between;
 `;
 
 const NewsFeedIconBox = styled.div`
