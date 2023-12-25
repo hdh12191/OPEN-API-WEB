@@ -22,7 +22,7 @@ export function NewsList({ SliceNewsFeeds }: any) {
     <NewsFeedBox>
       {SliceNewsFeeds.map(({ id, title, time_ago, points, user }: NewsFeed) => (
         <NewsFeeds key={id}>
-          <NewsFeed to={`/page/${id}`}>{title}</NewsFeed>
+          <NewsFeedStyle to={`/newsdetail/${id}`}>{title}</NewsFeedStyle>
           <NewsFeedIconBox>
             <NewsFeedIcon>
               <User size="24" />
@@ -61,7 +61,7 @@ const NewsFeeds = styled.div`
   }
 `;
 
-const NewsFeed = styled(Link)`
+const NewsFeedStyle = styled(Link)`
   text-decoration: none;
   color: #464141;
   font-weight: 500;
