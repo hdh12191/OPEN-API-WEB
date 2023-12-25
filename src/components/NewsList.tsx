@@ -1,5 +1,3 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { User } from "@styled-icons/boxicons-solid/User";
@@ -7,66 +5,46 @@ import { Heart } from "@styled-icons/boxicons-solid/Heart";
 import { Clock } from "@styled-icons/bootstrap/Clock";
 
 interface NewsFeed {
-  id: number;
-  title: string;
-  points?: number | null;
-  user?: string | null;
-  time: number;
-  time_ago: string;
   comments_count: number;
-  type: string;
-  url?: string;
   domain?: string;
+  id: number;
+  points: number;
+  time?: 1703237527;
+  time_ago: string;
+  title: string;
+  type?: string;
+  url?: string;
+  user: string;
 }
 
-export default function NewsList() {
-  const NEWS_URL = "https://api.hnpwa.com/v0/news/1.json";
-  const [newsFeeds, setNewsFeeds] = useState<NewsFeed[]>([]);
-
-  useEffect(() => {
-    const getNewsFeed = async () => {
-      const newsFeeds = await axios.get<NewsFeed[]>(NEWS_URL);
-      setNewsFeeds(newsFeeds.data);
-    };
-    getNewsFeed();
-  }, []);
-
-  console.log(newsFeeds);
-
+export function NewsList({ SliceNewsFeeds }: any) {
   return (
     <NewsFeedBox>
-      {newsFeeds.map((newsFeed: NewsFeed, index: number) => {
-        if (index && index < newsFeeds.length) {
-          return (
-            <NewsFeeds key={newsFeed.id}>
-              <NewsFeed to={`/newsdetail/${newsFeed.id}`}>
-                {newsFeed.title}({newsFeed.comments_count})
-              </NewsFeed>
-              <NewsFeedIconBox>
-                <NewsFeedIcon>
-                  <User size="24" />
-                  {newsFeed.user}
-                </NewsFeedIcon>
-                <NewsFeedIcon>
-                  <Heart size="24" />
-                  {newsFeed.points}
-                </NewsFeedIcon>
-                <NewsFeedIcon>
-                  <Clock size="20" />
-                  {newsFeed.time_ago}
-                </NewsFeedIcon>
-              </NewsFeedIconBox>
-            </NewsFeeds>
-          );
-        }
-      })}
+      {SliceNewsFeeds.map(({ id, title, time_ago, points, user }: NewsFeed) => (
+        <NewsFeeds key={id}>
+          <NewsFeedStyle to={`/newsdetail/${id}`}>{title}</NewsFeedStyle>
+          <NewsFeedIconBox>
+            <NewsFeedIcon>
+              <User size="24" />
+              {user}
+            </NewsFeedIcon>
+            <NewsFeedIcon>
+              <Heart size="24" />
+              {points}
+            </NewsFeedIcon>
+            <NewsFeedIcon>
+              <Clock size="20" />
+              {time_ago}
+            </NewsFeedIcon>
+          </NewsFeedIconBox>
+        </NewsFeeds>
+      ))}
     </NewsFeedBox>
   );
 }
 
 const NewsFeedBox = styled.div`
   background-color: gray;
-  max-width: 100%;
   padding: 4px;
 `;
 
@@ -83,7 +61,7 @@ const NewsFeeds = styled.div`
   }
 `;
 
-const NewsFeed = styled(Link)`
+const NewsFeedStyle = styled(Link)`
   text-decoration: none;
   color: #464141;
   font-weight: 500;
