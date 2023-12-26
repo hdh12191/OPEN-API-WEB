@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { User } from "@styled-icons/boxicons-solid/User";
 import { Heart } from "@styled-icons/boxicons-solid/Heart";
 import { Clock } from "@styled-icons/bootstrap/Clock";
-import { StarFill } from "@styled-icons/bootstrap/StarFill";
 import { useDispatch } from "react-redux";
 import { addFavoriteList } from "../store/slice/favoriteSlice";
 
@@ -41,7 +40,7 @@ export function NewsList({ SliceNewsFeeds }: any) {
                 );
               }}
             >
-              <StarFill size="30" color="#a4a795" />
+              즐겨찾기등록
             </button>
           </FavoriteButtonBox>
 
@@ -93,6 +92,16 @@ const NewsFeedStyle = styled(Link)`
 const FavoriteButtonBox = styled.div`
   display: flex;
   justify-content: space-between;
+`;
+
+const FavoriteButton = styled.button`
+  border: 1px solid #7a6a5c;
+  background-color: #cabaac;
+  border-radius: 10px;
+
+  &:hover {
+    font-size: 18px;
+  }
 `;
 
 const NewsFeedIconBox = styled.div`

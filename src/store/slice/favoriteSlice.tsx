@@ -23,7 +23,14 @@ const favoriteListSlice = createSlice({
     addFavoriteList(state, action) {
       state.push(action.payload);
     },
+    deleteFavoriteList(state, action) {
+      const id = state.findIndex((a) => {
+        return a.id === action.payload.id;
+      });
+      state.splice(id, 1);
+    },
   },
 });
-export const { addFavoriteList } = favoriteListSlice.actions;
+export const { addFavoriteList, deleteFavoriteList } =
+  favoriteListSlice.actions;
 export default favoriteListSlice;

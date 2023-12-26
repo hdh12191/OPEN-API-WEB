@@ -6,40 +6,63 @@ import { Heart } from "@styled-icons/boxicons-solid/Heart";
 import { Clock } from "@styled-icons/bootstrap/Clock";
 import { StarFill } from "@styled-icons/bootstrap/StarFill";
 import styled from "styled-components";
+import { deleteFavoriteList } from "../store/slice/favoriteSlice";
+import { Pagination } from "./Pagination";
+import { useState } from "react";
 
 export default function FavoritesList() {
   const favoriteList = useSelector((state: RootState) => state.favrioiteList);
   const dispatch = useDispatch();
+  const [currentPage, setCurrentPage] = useState(1);
+  const newsFeedsPerPage = 3;
+  const firstNewsIndex = (currentPage - 1) * newsFeedsPerPage;
+  const lastNewsIndex = firstNewsIndex + newsFeedsPerPage;
+  const currentFavoriteList = favoriteList.slice(firstNewsIndex, lastNewsIndex);
 
-  console.log(favoriteList)
   return (
-    <NewsFeedBox>
-      {favoriteList.map(({ id, title, time_ago, points, user }) => (
-        <NewsFeeds key={id}>
-          <FavoriteButtonBox>
-            <NewsFeedStyle to={`/newsdetail/${id}`}>{title}</NewsFeedStyle>
-            <button>
-              <StarFill size="30" color="#a4a795" />
-            </button>
-          </FavoriteButtonBox>
+    <>
+      <NewsFeedBox>
+        {currentFavoriteList.map((favorite) => (
+          <NewsFeeds key={favorite.id}>
+            <FavoriteButtonBox>
+              <NewsFeedStyle to={`/newsdetail/${favorite.id}`}>
+                {favorite.title}
+              </NewsFeedStyle>
+              <button
+                onClick={() => {
+                  dispatch(deleteFavoriteList(favorite.id));
+                }}
+              >
+                즐겨찾기해제
+              </button>
+            </FavoriteButtonBox>
 
-          <NewsFeedIconBox>
-            <NewsFeedIcon>
-              <User size="24" />
-              {user}
-            </NewsFeedIcon>
-            <NewsFeedIcon>
-              <Heart size="24" />
-              {points}
-            </NewsFeedIcon>
-            <NewsFeedIcon>
-              <Clock size="20" />
-              {time_ago}
-            </NewsFeedIcon>
-          </NewsFeedIconBox>
-        </NewsFeeds>
-      ))}
-    </NewsFeedBox>
+            <NewsFeedIconBox>
+              <NewsFeedIcon>
+                <User size="24" />
+                {favorite.user}
+              </NewsFeedIcon>
+              <NewsFeedIcon>
+                <Heart size="24" />
+                {favorite.points}
+              </NewsFeedIcon>
+              <NewsFeedIcon>
+                <Clock size="20" />
+                {favorite.time_ago}
+              </NewsFeedIcon>
+            </NewsFeedIconBox>
+          </NewsFeeds>
+        ))}
+      </NewsFeedBox>
+      <Paging>
+        <Pagination
+          newsFeedNum={favoriteList.length}
+          newsFeedsPerPage={newsFeedsPerPage}
+          setCurrentPage={setCurrentPage}
+          currentPage={currentPage}
+        />
+      </Paging>
+    </>
   );
 }
 
@@ -73,7 +96,6 @@ const FavoriteButtonBox = styled.div`
   justify-content: space-between;
 `;
 
-
 const NewsFeedIconBox = styled.div`
   display: grid;
   margin-top: 30px;
@@ -85,4 +107,11 @@ const NewsFeedIcon = styled.div`
   margin-right: 1px;
   font-size: 24px;
   font-weight: 400;
+`;
+
+const Paging = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
 `;
