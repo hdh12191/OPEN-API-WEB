@@ -1,11 +1,9 @@
-import Header from "../../components/Header";
-import NewsList from "../../components/NewsList";
+import { FilterableNewsList } from "../../components/FilterableNewsList";
 
 export default function HomePage() {
   return (
     <>
-      <Header />
-      <NewsList />
+      <FilterableNewsList />
     </>
   );
 }
