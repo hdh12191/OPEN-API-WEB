@@ -3,7 +3,7 @@ import styled from "styled-components";
 interface Pagenate {
   newsFeedNum: number;
   newsFeedsPerPage: number;
-  setCurrentPage: any;
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
   currentPage: number;
 }
 
@@ -13,6 +13,7 @@ export function Pagination({
   setCurrentPage,
   currentPage,
 }: Pagenate) {
+  
   const pageList = [];
   const totalPages = Math.ceil(newsFeedNum / newsFeedsPerPage);
 

@@ -4,17 +4,16 @@ import { RootState } from "../store/store";
 import { User } from "@styled-icons/boxicons-solid/User";
 import { Heart } from "@styled-icons/boxicons-solid/Heart";
 import { Clock } from "@styled-icons/bootstrap/Clock";
-import { StarFill } from "@styled-icons/bootstrap/StarFill";
-import styled from "styled-components";
 import { deleteFavoriteList } from "../store/slice/favoriteSlice";
 import { Pagination } from "./Pagination";
 import { useState } from "react";
+import styled from "styled-components";
 
 export default function FavoritesList() {
   const favoriteList = useSelector((state: RootState) => state.favrioiteList);
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
-  const newsFeedsPerPage = 3;
+  const newsFeedsPerPage = 6;
   const firstNewsIndex = (currentPage - 1) * newsFeedsPerPage;
   const lastNewsIndex = firstNewsIndex + newsFeedsPerPage;
   const currentFavoriteList = favoriteList.slice(firstNewsIndex, lastNewsIndex);
@@ -26,7 +25,7 @@ export default function FavoritesList() {
           <NewsFeeds key={favorite.id}>
             <FavoriteButtonBox>
               <NewsFeedStyle to={`/newsdetail/${favorite.id}`}>
-                {favorite.title}
+                {favorite.title}({favorite.comments_count})
               </NewsFeedStyle>
               <button
                 onClick={() => {

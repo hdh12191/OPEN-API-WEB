@@ -3,39 +3,45 @@ import styled from "styled-components";
 import { User } from "@styled-icons/boxicons-solid/User";
 import { Heart } from "@styled-icons/boxicons-solid/Heart";
 import { Clock } from "@styled-icons/bootstrap/Clock";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addFavoriteList } from "../store/slice/favoriteSlice";
+import { RootState } from "../store/store";
 
 export default interface NewsFeed {
   comments_count: number;
-  domain?: string;
   id: number;
   points: number;
-  time?: 1703237527;
   time_ago: string;
   title: string;
-  type?: string;
-  url?: string;
   user: string;
 }
 
-export function NewsList({ SliceNewsFeeds }: any) {
+export function NewsList({ sliceNewsFeeds }: any) {
+  let newsFeed = useSelector((state: RootState) => {
+    return state.newsFeeds;
+  });
   const dispatch = useDispatch();
+
+  newsFeed = [...sliceNewsFeeds];
+
   return (
     <NewsFeedBox>
-      {SliceNewsFeeds.map(({ id, title, time_ago, points, user }: NewsFeed) => (
-        <NewsFeeds key={id}>
+      {newsFeed.map((newsFeed: NewsFeed, index: number) => (
+        <NewsFeeds key={index}>
           <FavoriteButtonBox>
-            <NewsFeedStyle to={`/newsdetail/${id}`}>{title}</NewsFeedStyle>
+            <NewsFeedStyle to={`/newsdetail/${newsFeed.id}`}>
+              {newsFeed.title}({newsFeed.comments_count})
+            </NewsFeedStyle>
             <button
               onClick={() => {
                 dispatch(
                   addFavoriteList({
-                    id,
-                    title,
-                    time_ago,
-                    points,
-                    user,
+                    id: newsFeed.id,
+                    title: newsFeed.title,
+                    time_ago: newsFeed.time_ago,
+                    user: newsFeed.user,
+                    points: newsFeed.points,
+                    comments_count: newsFeed.comments_count,
                   })
                 );
               }}
@@ -47,15 +53,15 @@ export function NewsList({ SliceNewsFeeds }: any) {
           <NewsFeedIconBox>
             <NewsFeedIcon>
               <User size="24" />
-              {user}
+              {newsFeed.user}
             </NewsFeedIcon>
             <NewsFeedIcon>
               <Heart size="24" />
-              {points}
+              {newsFeed.points}
             </NewsFeedIcon>
             <NewsFeedIcon>
               <Clock size="20" />
-              {time_ago}
+              {newsFeed.time_ago}
             </NewsFeedIcon>
           </NewsFeedIconBox>
         </NewsFeeds>
