@@ -5,30 +5,36 @@ import FavoritesPage from "../pages/favoritesPage";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { setNewsFeeds } from "../store/slice/newsFeedsSlice";
-import { RootState } from "../store/store";
 import NEWS_URL from "../apis/newsFeedApi";
 import axios from "axios";
 import Error from "./Error";
+import { RootState } from "../store/store";
+import NewsFeed from "./NewsList";
 
 export default function Router() {
-  const newsFeeds = useSelector((state: RootState) => {
-    return state.newsFeeds;
-  });
   const [error, setError] = useState(false);
+  const newsFeeds = useSelector((state: RootState) => state.newsFeeds);
+
   const dispatch = useDispatch();
+
+  const makeFeeds = (feeds: NewsFeed[]) => {
+    for (let i = 0; i < feeds.length; i++) {
+      feeds[i].isFavoriteButtonOn = false;
+    }
+    return feeds;
+  };
 
   useEffect(() => {
     try {
       const getNewsFeeds = async () => {
         const newsFeeds = await axios.get(NEWS_URL);
-        console.log(newsFeeds.data);
-        dispatch(setNewsFeeds(newsFeeds.data));
+        dispatch(setNewsFeeds(makeFeeds(newsFeeds.data)));
       };
       getNewsFeeds();
     } catch (e) {
       setError(true);
     }
-  }, []);
+  }, [dispatch]);
 
   return (
     <>

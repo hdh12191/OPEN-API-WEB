@@ -3,13 +3,17 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import Loader from "./Loader";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import Error from "./Error";
 import {
   addFavoriteList,
   deleteFavoriteList,
 } from "../store/slice/favoriteSlice";
-import { deleteNewsFeed } from "../store/slice/newsFeedsSlice";
+import {
+  deleteNewsFeed,
+  toggleOff,
+  toggleOn,
+} from "../store/slice/newsFeedsSlice";
 
 interface NewsContent {
   id: number;
@@ -21,10 +25,12 @@ interface NewsContent {
   domain?: string;
   comments?: NewsContent[];
   comments_count?: number;
+  isFavoriteButtonOn: boolean;
 }
 
 export default function NewsDetail() {
   const [newsContents, setNewsContent] = useState<NewsContent>();
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const params = useParams();
@@ -70,32 +76,23 @@ export default function NewsDetail() {
                   ))}
                 </ul>
                 <ButtonBox>
-                <FavoriteButton
-                  onClick={() => {
-                    dispatch(
-                      addFavoriteList({
-                        id: newsContents?.id,
-                        title: newsContents?.title,
-                        time_ago: newsContents?.time_ago,
-                        user: newsContents?.user,
-                        points: newsContents?.points,
-                        comments_count: newsContents?.comments_count,
-                      })
-                    );
-                  }}
-                >
-                  즐겨찾기등록
-                </FavoriteButton>
-                <DeleteNewsFeedButton
-                  onClick={() => {
-                    dispatch(deleteNewsFeed(newsContents?.id));
-                    dispatch(deleteFavoriteList(newsContents?.id));
-                    navigate("/newslist");
-                    window.scrollTo(0, 0);
-                  }}
-                >
-                  삭제
-                </DeleteNewsFeedButton>
+                  <FavoriteButton
+                    onClick={() => {
+                      dispatch(addFavoriteList(newsContents?.id));
+                    }}
+                  >
+                    즐겨찾기등록
+                  </FavoriteButton>
+                  <DeleteNewsFeedButton
+                    onClick={() => {
+                      dispatch(deleteNewsFeed(newsContents?.id));
+                      dispatch(deleteFavoriteList(newsContents?.id));
+                      navigate("/newslist");
+                      window.scrollTo(0, 0);
+                    }}
+                  >
+                    삭제
+                  </DeleteNewsFeedButton>
                 </ButtonBox>
               </NewsContentStyle>
             </NewsContentBox>
@@ -126,17 +123,13 @@ const ButtonBox = styled.div`
   align-items: center;
   justify-content: end;
   margin: 10px 20px;
-`
+`;
 const FavoriteButton = styled.button`
   padding: 10px;
   margin-right: 40px;
-  
-
 `;
 const DeleteNewsFeedButton = styled.button`
   padding: 10px;
- 
-
 `;
 const UserName = styled.p`
   color: #8a3b3b;

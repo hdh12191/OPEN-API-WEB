@@ -8,15 +8,20 @@ import { deleteFavoriteList } from "../store/slice/favoriteSlice";
 import { Pagination } from "./Pagination";
 import { useState } from "react";
 import styled from "styled-components";
+import { toggleOff, toggleOn } from "../store/slice/newsFeedsSlice";
 
 export default function FavoritesList() {
   const favoriteList = useSelector((state: RootState) => state.favrioiteList);
+
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
+
   const newsFeedsPerPage = 6;
   const firstNewsIndex = (currentPage - 1) * newsFeedsPerPage;
   const lastNewsIndex = firstNewsIndex + newsFeedsPerPage;
   const currentFavoriteList = favoriteList.slice(firstNewsIndex, lastNewsIndex);
+
+  console.log(favoriteList);
 
   return (
     <>

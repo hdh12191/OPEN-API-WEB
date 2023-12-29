@@ -4,8 +4,9 @@ import { User } from "@styled-icons/boxicons-solid/User";
 import { Heart } from "@styled-icons/boxicons-solid/Heart";
 import { Clock } from "@styled-icons/bootstrap/Clock";
 import { useDispatch, useSelector } from "react-redux";
-import { addFavoriteList } from "../store/slice/favoriteSlice";
+import { addFavoriteList, deleteFavoriteList } from "../store/slice/favoriteSlice";
 import { RootState } from "../store/store";
+import { toggleOff, toggleOn } from "../store/slice/newsFeedsSlice";
 
 export default interface NewsFeed {
   comments_count: number;
@@ -14,39 +15,43 @@ export default interface NewsFeed {
   time_ago: string;
   title: string;
   user: string;
+  isFavoriteButtonOn: boolean;
 }
 
-export function NewsList({ sliceNewsFeeds }: any) {
-  let newsFeed = useSelector((state: RootState) => {
-    return state.newsFeeds;
-  });
-  const dispatch = useDispatch();
+interface GetPage {
+  currentPage: number;
+  newsFeedsPerPage: number;
+}
 
-  newsFeed = [...sliceNewsFeeds];
+export function NewsList({ currentPage, newsFeedsPerPage }: GetPage) {
+  const dispatch = useDispatch();
+  const newsFeeds = useSelector((state: RootState) => state.newsFeeds);
+
+  const firstNewsIndex = (currentPage - 1) * newsFeedsPerPage;
+  const lastNewsIndex = firstNewsIndex + newsFeedsPerPage;
+  const currentNewsFeeds = newsFeeds.slice(firstNewsIndex, lastNewsIndex);
 
   return (
     <NewsFeedBox>
-      {newsFeed.map((newsFeed: NewsFeed, index: number) => (
-        <NewsFeeds key={index}>
+      {currentNewsFeeds.map((newsFeed: NewsFeed) => (
+        <NewsFeeds key={newsFeed.id}>
           <FavoriteButtonBox>
             <NewsFeedStyle to={`/newsdetail/${newsFeed.id}`}>
               {newsFeed.title}({newsFeed.comments_count})
             </NewsFeedStyle>
             <button
               onClick={() => {
-                dispatch(
-                  addFavoriteList({
-                    id: newsFeed.id,
-                    title: newsFeed.title,
-                    time_ago: newsFeed.time_ago,
-                    user: newsFeed.user,
-                    points: newsFeed.points,
-                    comments_count: newsFeed.comments_count,
-                  })
-                );
+                if (newsFeed.isFavoriteButtonOn === false) {
+                  dispatch(addFavoriteList(newsFeed));
+                  dispatch(toggleOn(newsFeed.id));
+                  console.log(currentNewsFeeds)
+                }else {
+                  dispatch(deleteFavoriteList(newsFeed.id));
+                  dispatch(toggleOff(newsFeed.id));
+                }
               }}
             >
-              즐겨찾기등록
+              {newsFeed.isFavoriteButtonOn ? "즐겨찾기해제" : "즐겨찾기등록"}
             </button>
           </FavoriteButtonBox>
 
@@ -98,16 +103,6 @@ const NewsFeedStyle = styled(Link)`
 const FavoriteButtonBox = styled.div`
   display: flex;
   justify-content: space-between;
-`;
-
-const FavoriteButton = styled.button`
-  border: 1px solid #7a6a5c;
-  background-color: #cabaac;
-  border-radius: 10px;
-
-  &:hover {
-    font-size: 18px;
-  }
 `;
 
 const NewsFeedIconBox = styled.div`
