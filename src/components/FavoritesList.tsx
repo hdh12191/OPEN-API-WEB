@@ -4,24 +4,23 @@ import { RootState } from "../store/store";
 import { User } from "@styled-icons/boxicons-solid/User";
 import { Heart } from "@styled-icons/boxicons-solid/Heart";
 import { Clock } from "@styled-icons/bootstrap/Clock";
-import { deleteFavoriteList } from "../store/slice/favoriteSlice";
+import { deleteFavoriteList, favoriteToggle } from "../store/slice/favoriteSlice";
 import { Pagination } from "./Pagination";
 import { useState } from "react";
 import styled from "styled-components";
-import { toggleOff, toggleOn } from "../store/slice/newsFeedsSlice";
+import { feedToggle } from "../store/slice/newsFeedsSlice";
 
 export default function FavoritesList() {
   const favoriteList = useSelector((state: RootState) => state.favrioiteList);
 
   const dispatch = useDispatch();
+
   const [currentPage, setCurrentPage] = useState(1);
 
   const newsFeedsPerPage = 6;
   const firstNewsIndex = (currentPage - 1) * newsFeedsPerPage;
   const lastNewsIndex = firstNewsIndex + newsFeedsPerPage;
   const currentFavoriteList = favoriteList.slice(firstNewsIndex, lastNewsIndex);
-
-  console.log(favoriteList);
 
   return (
     <>
@@ -35,9 +34,11 @@ export default function FavoritesList() {
               <button
                 onClick={() => {
                   dispatch(deleteFavoriteList(favorite.id));
+                  dispatch(favoriteToggle(favorite.id));
+                  dispatch(feedToggle(favorite.id));
                 }}
               >
-                즐겨찾기해제
+                {favorite.isFavoriteButtonOn ? "즐겨찾기해제" : "즐겨찾기등록"}
               </button>
             </FavoriteButtonBox>
 

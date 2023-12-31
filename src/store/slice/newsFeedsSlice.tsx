@@ -22,19 +22,21 @@ const newsFeedsSlice = createSlice({
     deleteNewsFeed(state, action) {
       return state.filter((newsFeed) => newsFeed.id !== action.payload);
     },
-    
-    toggleOn(state, action) {
+    feedToggle(state, action) {
       for (let i = 0; i < state.length; i++) {
-        if (state[i].id === action.payload) state[i].isFavoriteButtonOn = true;
-      }
-    },
-    toggleOff(state, action) {
-      for (let i = 0; i < state.length; i++) {
-        if (state[i].id === action.payload) state[i].isFavoriteButtonOn = false;
+        if (
+          state[i].id === action.payload &&
+          state[i].isFavoriteButtonOn === false
+        ) {
+          state[i].isFavoriteButtonOn = true;
+        }else if (state[i].id === action.payload &&
+          state[i].isFavoriteButtonOn === true){
+            state[i].isFavoriteButtonOn = false;
+          }
       }
     },
   },
 });
 
-export const { setNewsFeeds, deleteNewsFeed, toggleOn,toggleOff} = newsFeedsSlice.actions;
+export const { setNewsFeeds, deleteNewsFeed,feedToggle } = newsFeedsSlice.actions;
 export default newsFeedsSlice;

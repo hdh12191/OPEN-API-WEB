@@ -2,18 +2,16 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import HomePage from "../pages/home";
 import NewsDetailPage from "../pages/newsDetailPage";
 import FavoritesPage from "../pages/favoritesPage";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { setNewsFeeds } from "../store/slice/newsFeedsSlice";
 import NEWS_URL from "../apis/newsFeedApi";
 import axios from "axios";
 import Error from "./Error";
-import { RootState } from "../store/store";
 import NewsFeed from "./NewsList";
 
 export default function Router() {
   const [error, setError] = useState(false);
-  const newsFeeds = useSelector((state: RootState) => state.newsFeeds);
 
   const dispatch = useDispatch();
 

@@ -4,9 +4,13 @@ import { User } from "@styled-icons/boxicons-solid/User";
 import { Heart } from "@styled-icons/boxicons-solid/Heart";
 import { Clock } from "@styled-icons/bootstrap/Clock";
 import { useDispatch, useSelector } from "react-redux";
-import { addFavoriteList, deleteFavoriteList } from "../store/slice/favoriteSlice";
+import {
+  addFavoriteList,
+  deleteFavoriteList,
+  favoriteToggle,
+} from "../store/slice/favoriteSlice";
 import { RootState } from "../store/store";
-import { toggleOff, toggleOn } from "../store/slice/newsFeedsSlice";
+import { feedToggle } from "../store/slice/newsFeedsSlice";
 
 export default interface NewsFeed {
   comments_count: number;
@@ -43,11 +47,12 @@ export function NewsList({ currentPage, newsFeedsPerPage }: GetPage) {
               onClick={() => {
                 if (newsFeed.isFavoriteButtonOn === false) {
                   dispatch(addFavoriteList(newsFeed));
-                  dispatch(toggleOn(newsFeed.id));
-                  console.log(currentNewsFeeds)
-                }else {
+                  dispatch(favoriteToggle(newsFeed.id));
+                  dispatch(feedToggle(newsFeed.id));
+                } else {
                   dispatch(deleteFavoriteList(newsFeed.id));
-                  dispatch(toggleOff(newsFeed.id));
+                  dispatch(favoriteToggle(newsFeed.id));
+                  dispatch(feedToggle(newsFeed.id));
                 }
               }}
             >

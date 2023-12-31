@@ -1,36 +1,20 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import Loader from "./Loader";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Error from "./Error";
 import {
   addFavoriteList,
   deleteFavoriteList,
+  favoriteToggle,
 } from "../store/slice/favoriteSlice";
-import {
-  deleteNewsFeed,
-  toggleOff,
-  toggleOn,
-} from "../store/slice/newsFeedsSlice";
-
-interface NewsContent {
-  id: number;
-  title: string;
-  points?: number | null;
-  user: string | null;
-  time_ago?: string;
-  content: string;
-  domain?: string;
-  comments?: NewsContent[];
-  comments_count?: number;
-  isFavoriteButtonOn: boolean;
-}
+import { deleteNewsFeed, feedToggle } from "../store/slice/newsFeedsSlice";
+import { RootState } from "../store/store";
+import NewsFeed from "./NewsList";
 
 export default function NewsDetail() {
-  const [newsContents, setNewsContent] = useState<NewsContent>();
-
+  const newsFeeds = useSelector((state: RootState) => state.newsFeeds);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const params = useParams();
@@ -38,22 +22,39 @@ export default function NewsDetail() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const isFavoriteButtonOn = (feeds: NewsFeed[]) => {
+    for (let i = 0; i < feeds.length; i++) {
+      if (feeds[i].id === Number(newsId)) {
+        return feeds[i].isFavoriteButtonOn;
+      }
+    }
+  };
+
+  const getFeed = (feeds: NewsFeed[]) => {
+    for (let i = 0; i < feeds.length; i++) {
+      if (feeds[i].id === Number(newsId)) {
+        return feeds[i];
+      }
+    }
+  };
+
+  const getTitle = (feeds: NewsFeed[]) => {
+    for (let i = 0; i < feeds.length; i++) {
+      if (feeds[i].id === Number(newsId)) {
+        return feeds[i].title;
+      }
+    }
+  };
+
   useEffect(() => {
     try {
-      const getNewsContents = async () => {
-        setLoading(true);
-        const newsContents = await axios.get(
-          `https://api.hnpwa.com/v0/item/${newsId}.json`
-        );
-        setNewsContent(newsContents.data);
-      };
-      getNewsContents();
-    } catch (e) {
+      setLoading(true);
+    } catch (error) {
       setError(true);
     } finally {
       setLoading(false);
     }
-  }, [newsId]);
+  }, []);
 
   return (
     <>
@@ -66,27 +67,48 @@ export default function NewsDetail() {
           ) : (
             <NewsContentBox>
               <NewsContentStyle>
-                <NewsContentTitle>{newsContents?.title}</NewsContentTitle>
+                <NewsContentTitle>{getTitle(newsFeeds)}</NewsContentTitle>
                 <ul>
-                  {newsContents?.comments?.map((comment) => (
-                    <Comment key={comment.id}>
-                      <UserName>Username : {comment.user}</UserName>
-                      <p>{comment.content.replace("<p>", "")}</p>
+                  {newsFeeds.map((feed) => (
+                    <Comment key={feed.id}>
+                      <UserName>Username : {feed.user}</UserName>
+                      <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+                        sed do eiusmod tempor incididunt ut labore et dolore
+                        magna aliqua. Ut enim ad minim veniam, quis nostrud
+                        exercitation ullamco laboris nisi ut aliquip ex ea
+                        commodo consequat. Duis aute irure dolor in
+                        reprehenderit in voluptate velit esse cillum dolore eu
+                        fugiat nulla pariatur. Excepteur sint occaecat cupidatat
+                        non proident, sunt in culpa qui officia deserunt mollit
+                        anim id est laborum.
+                      </p>
                     </Comment>
                   ))}
                 </ul>
                 <ButtonBox>
                   <FavoriteButton
                     onClick={() => {
-                      dispatch(addFavoriteList(newsContents?.id));
+                      isFavoriteButtonOn(newsFeeds);
+                      if (isFavoriteButtonOn(newsFeeds) === false) {
+                        dispatch(addFavoriteList(getFeed(newsFeeds)));
+                        dispatch(favoriteToggle(Number(newsId)));
+                        dispatch(feedToggle(Number(newsId)));
+                      } else {
+                        dispatch(deleteFavoriteList(Number(newsId)));
+                        dispatch(favoriteToggle(Number(newsId)));
+                        dispatch(feedToggle(Number(newsId)));
+                      }
                     }}
                   >
-                    즐겨찾기등록
+                    {isFavoriteButtonOn(newsFeeds)
+                      ? "즐겨찾기해제"
+                      : "즐겨찾기등록"}
                   </FavoriteButton>
                   <DeleteNewsFeedButton
                     onClick={() => {
-                      dispatch(deleteNewsFeed(newsContents?.id));
-                      dispatch(deleteFavoriteList(newsContents?.id));
+                      dispatch(deleteNewsFeed(Number(newsId)));
+                      dispatch(deleteFavoriteList(Number(newsId)));
                       navigate("/newslist");
                       window.scrollTo(0, 0);
                     }}
